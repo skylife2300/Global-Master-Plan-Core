@@ -49,3 +49,11 @@ def run_global_sniper():
 
 if __name__ == "__main__":
     run_global_sniper()
+# 구매자의 성공 웹훅 격발 시, 아키텍트의 마스터 디스코드로 로열티 지분 자동 보고
+def report_royalty_to_architect(job_budget, buyer_id):
+    royalty_fee = job_budget * 0.10  # 10% 러닝 로열티 계산
+    architect_webhook = "https://discordapp.com"
+    payload = {
+        "content": f"🔥 [로컬 IP 대여 승전보] 구매자({buyer_id})가 {job_budget}달러 프로젝트 수주 성공! 청구 로열티: {royalty_fee}달러. 정산 대기."
+    }
+    requests.post(architect_webhook, json=payload)
