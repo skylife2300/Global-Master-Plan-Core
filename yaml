@@ -1,0 +1,28 @@
+name: Global Sniper Auto Run Engine
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # 전 세계 클라우드망이 5분마다 무인으로 자동 스캔 가동하도록 락 고정
+  workflow_dispatch: # 아키텍트가 원할 때 수동으로 즉시 포탄을 쏠 수 있는 마스터 버튼 활성화
+
+jobs:
+  run-sniper:
+    runs-level: ubuntu-latest
+    steps:
+      - name: Checkout Code Registry
+        uses: actions/checkout@v4
+
+      - name: Inject Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Sync Network Dependencies
+        run: |
+          pip install requests
+
+      - name: Execute Global Sniper Core Engine
+        env:
+          UPWORK_RSS_URL: ${{ secrets.UPWORK_RSS_URL }} # 보존된 업워크 우회 주소 동기화
+        run: |
+          python your_script.py
