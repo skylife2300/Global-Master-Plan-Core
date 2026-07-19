@@ -2,8 +2,8 @@ name: Global Sniper Auto Run Engine
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # 전 세계 클라우드망이 5분마다 무인으로 자동 스캔 가동하도록 락 고정
-  workflow_dispatch: # 아키텍트가 원할 때 수동으로 즉시 포탄을 쏠 수 있는 마스터 버튼 활성화
+    - cron: '*/5 * * * *' # 5분마다 무인 자동 가동
+  workflow_dispatch: # 마스터 수동 격발 버튼
 
 jobs:
   run-sniper:
@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout Code Registry
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }} # 깃허브가 스스로 저장소에 쓸 수 있는 권한 부여
 
       - name: Inject Python Environment
         uses: actions/setup-python@v5
@@ -24,6 +26,15 @@ jobs:
       - name: Execute Global Sniper Core Engine
         env:
           UPWORK_RSS_URL: ${{ secrets.UPWORK_RSS_URL }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }} # 비밀 금고 안의 고유 웹훅 주소를 메모리에 강제 로드
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           python your_script.py
+
+      # 🔥 [핵심] 가상환경이 파괴되기 전, 업데이트된 last_sales_state.json을 깃허브 레포에 강제 박제
+      - name: Auto Push State Registry (Anti-Duplicate Lock)
+        run: |
+          git config --global user.name "Global Sniper Bot"
+          git config --global user.email "bot@global-sniper.ai"
+          git add last_sales_state.json
+          # 변경사항이 있을 때만 커밋하여 에러 방지
+          git diff --quiet && git diff --staged --quiet || (git commit -m "🚨 [SYSTEM] State Updated & Locked" && git push)
