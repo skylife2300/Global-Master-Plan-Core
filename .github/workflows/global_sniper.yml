@@ -2,7 +2,7 @@ name: Global Sniper Auto Run Engine
 
 on:
   schedule:
-    - cron: '*/5 * * * *' # 5분마다 무인 자동 스캔 가동하도록 락 고정
+    - cron: '*/5 * * * *' # 전 세계 클라우드망이 5분마다 무인으로 자동 스캔 가동하도록 락 고정
   workflow_dispatch: # 아키텍트가 원할 때 수동으로 즉시 포탄을 쏠 수 있는 마스터 버튼 활성화
 
 jobs:
@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout Code Registry
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }} # 깃허브가 스스로 저장소에 쓸 수 있는 권한 부여
 
       - name: Inject Python Environment
         uses: actions/setup-python@v5
@@ -30,17 +28,16 @@ jobs:
         run: |
           python your_script.py
 
-      # 🔥 [핵심] 가상환경이 파괴되기 전, 업데이트된 last_sales_state.json을 깃허브 레포지토리에 강제 박제
+      # 🔥 [수정 포인트] 원본 로직을 살리되, 최초 실행 시 에러로 터지는 현상만 방어
       - name: Auto Push State Registry (Anti-Duplicate Lock)
         run: |
           git config --global user.name "Global Sniper Bot"
           git config --global user.email "bot@global-sniper.ai"
           
-          # [Fatal 에러 방어선] 파일이 아직 생성되지 않은 최초 실행 상태라면 빈 JSON 구조를 강제 주입
+          # 최초 실행 시 last_sales_state.json 파일이 없으면 빈 상태 파일을 생성하여 에러 방지
           if [ ! -f last_sales_state.json ]; then
             echo '{"last_job_link": "", "total_captured": 0, "system_locked": false}' > last_sales_state.json
           fi
           
           git add last_sales_state.json
-          # 변경사항(새로운 일감 포획)이 있을 때만 안전하게 커밋 및 푸시 격발
           git diff --quiet && git diff --staged --quiet || (git commit -m "🚨 [SYSTEM] State Updated & Locked" && git push)
