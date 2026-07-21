@@ -14,7 +14,7 @@ You will 'Fork' the clean source code into your personal repository and run it u
 📌 NO-REFUND POLICY: Due to the nature of digital source code replication and instant delivery via GitHub Forking, all sales are final. No refunds under any circumstances.
 
 ⚡ LIVE PROOF (97+ Flawless Run Logs): 
-https://github.com/skylife2300/Global-Master-Plan-Core/actions
+https://github.com
 
-🛒 SECURE YOUR LIFETIME RADAR ACCESS NOW: 
-https://darenwave58.gumroad.com/l/otvtus
+🛒 SECURE YOUR LIFETIME RADAR ACCESS NOW (PRICE: ₩239,342): 
+https://gumroad.com
